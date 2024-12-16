@@ -5,7 +5,7 @@ info:
   description: API for managing milk farm operations including cows, medical checks, births, and milk production
 
 servers:
-  - url: http://localhost:3000/api
+  - url: http://localhost:4000/api
     description: Local development server
 
 components:

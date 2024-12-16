@@ -4,5 +4,11 @@
     "username": "string",
     "password": "$2a$10$0NipuluxfMs6A/k4W6XnJefnbrXf/xnd.g36YZdMdG5lSp9.9WRQW",
     "role": "admin"
+  },
+  {
+    "id": "44608ebf-47c0-45f4-88fc-1ea55d732fdf",
+    "username": "admin",
+    "password": "$2a$10$NUxGw6a2plfqSot6oWoIV.mcInxR4YsbHR.UFFWtQauR/XEIDBUHW",
+    "role": "admin"
   }
 ]

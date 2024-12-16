@@ -30,27 +30,29 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
     const NavLinks = () => (
         <div
             className={cn(
-                'flex flex-col space-y-1 lg:space-y-2 flex-1',
+                'flex flex-col justify-between space-y-1 lg:space-y-2 flex-1',
                 className
             )}
         >
-            {items.map((item) => (
-                <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsDrawerOpen(false)}
-                    className={cn(
-                        buttonVariants({ variant: 'ghost' }),
-                        pathname === item.href
-                            ? 'bg-gray-500 hover:bg-muted'
-                            : 'hover:bg-transparent hover:underline',
-                        'justify-start',
-                        'text-white'
-                    )}
-                >
-                    {item.title}
-                </Link>
-            ))}
+            <div className='flex-1 flex flex-col space-y-1 lg:space-y-2'>
+                {items.map((item) => (
+                    <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setIsDrawerOpen(false)}
+                        className={cn(
+                            buttonVariants({ variant: 'ghost' }),
+                            pathname === item.href
+                                ? 'bg-gray-500 hover:bg-muted'
+                                : 'hover:bg-transparent hover:underline',
+                            'justify-start',
+                            'text-white'
+                        )}
+                    >
+                        {item.title}
+                    </Link>
+                ))}
+            </div>
             <Button
                 onClick={handleLogout}
                 className={cn('mt-auto hover:underline text-white bg-red-400')}
