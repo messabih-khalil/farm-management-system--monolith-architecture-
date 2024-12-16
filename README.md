@@ -9,12 +9,13 @@ This project is an App for managing cow farm operations, including cow managemen
 ## Table of Contents
 
 1. [Backend Setup](#backend-setup)
-2. [Running the App with Docker Compose](#running-the-app-with-docker-compose)
-3. [Running the App with kubectl](#running-the-app-with-kubectl)
-4. [Preview Screenshots](#preview-screenshots)
-5. [System Design Architecture](#system-design-architecture)
+2. [Tech Stack](#tech-stack)
+3. [Running the App with Docker Compose](#running-the-app-with-docker-compose)
+4. [Running the App with kubectl](#running-the-app-with-kubectl)
+5. [Preview Screenshots](#preview-screenshots)
+6. [System Design Architecture](#system-design-architecture)
+
    * [Deployment Plan](#deployment-plan)
-6. [Tech Stack](#tech-stack)
 
 ---
 
@@ -74,6 +75,35 @@ Cow:
 ```
 
 ---
+
+## Tech Stack
+
+The Cow Farm Management App is built using the following technologies:
+
+* **Frontend**: Next.js
+* **Backend**:
+
+  * **Express.js**: Web framework for Node.js, used to handle API requests.
+  * **TypeScript**: Type-safe development for both the backend and frontend.
+* **Authentication**:
+
+  * JWT (JSON Web Tokens): For secure user authentication.
+* **Containerization**:
+
+  * **Docker**: For containerizing the application and ensuring consistency across environments.
+  * **Docker Compose**: To define and run multi-container Docker applications.
+* **Orchestration**:
+
+  * **Kubernetes**: For managing the deployment and scaling of the application in a cloud environment.
+* **Infrastructure as Code**:
+
+  * **Terraform**: For provisioning and managing infrastructure in the cloud.
+* **CI/CD**:
+
+  * **GitHub Actions**: For continuous integration and deployment pipelines.
+* **Version Control**:
+
+  * **GitHub**: For version control and hosting the codebase.
 
 ## Running the App with Docker Compose
 
@@ -215,32 +245,3 @@ The system is designed to manage various farm operations efficiently. It include
 ![arch](./screenshots/architecture.png)
 
 ---
-
-## Tech Stack
-
-The Cow Farm Management API is built using the following technologies:
-
-* **Frontend**: Next.js
-* **Backend**:
-
-  * **Express.js**: Web framework for Node.js, used to handle API requests.
-  * **TypeScript**: Type-safe development for both the backend and frontend.
-* **Authentication**:
-
-  * JWT (JSON Web Tokens): For secure user authentication.
-* **Containerization**:
-
-  * **Docker**: For containerizing the application and ensuring consistency across environments.
-  * **Docker Compose**: To define and run multi-container Docker applications.
-* **Orchestration**:
-
-  * **Kubernetes**: For managing the deployment and scaling of the application in a cloud environment.
-* **Infrastructure as Code**:
-
-  * **Terraform**: For provisioning and managing infrastructure in the cloud.
-* **CI/CD**:
-
-  * **GitHub Actions**: For continuous integration and deployment pipelines.
-* **Version Control**:
-
-  * **GitHub**: For version control and hosting the codebase.
