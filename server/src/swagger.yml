@@ -1,0 +1,583 @@
+openapi: 3.0.0
+info:
+  title: Milk Farm Management API
+  version: 1.0.0
+  description: API for managing milk farm operations including cows, medical checks, births, and milk production
+
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Cow:
+      type: object
+      required:
+        - entryDate
+        - breed
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the cow
+          example: "uuid-123-456"
+        entryDate:
+          type: string
+          format: date
+          description: Date the cow entered the farm
+          example: "2024-01-15"
+        breed:
+          type: string
+          enum:
+            - Holstein
+            - Montbeliarde
+          description: Breed of the cow
+          example: "Holstein"
+
+    MedicalCheck:
+      type: object
+      required:
+        - cowId
+        - checkDate
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the medical check
+          example: "uuid-123-456"
+        cowId:
+          type: string
+          description: ID of the cow being checked
+          example: "cow-uuid-123"
+        checkDate:
+          type: string
+          format: date
+          description: Date of medical check
+          example: "2024-01-15"
+        disease:
+          type: string
+          description: Any disease detected during the check
+          example: "Mastitis"
+
+    Birth:
+      type: object
+      required:
+        - motherCowId
+        - birthDate
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the birth record
+          example: "uuid-123-456"
+        motherCowId:
+          type: string
+          description: ID of the mother cow
+          example: "cow-uuid-123"
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth
+          example: "2024-01-15"
+
+    MilkProduction:
+      type: object
+      required:
+        - date
+        - milkQuantityLiters
+      properties:
+        id:
+          type: string
+          description: Unique identifier for milk production record
+          example: "uuid-123-456"
+        date:
+          type: string
+          format: date
+          description: Date of milk production
+          example: "2024-01-15"
+        milkQuantityLiters:
+          type: number
+          description: Total milk production in liters
+          example: 250.5
+
+    User:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the user
+          example: "uuid-123-456"
+        username:
+          type: string
+          description: User's username
+          example: "farmadmin"
+        role:
+          type: string
+          enum:
+            - admin
+            - user
+          description: User role
+          example: "admin"
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: "Resource not found"
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - user
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Username already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      summary: User login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cows:
+    post:
+      summary: Create a new cow
+      security:
+        - bearerAuth: []
+      tags:
+        - Cows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cow'
+      responses:
+        '201':
+          description: Cow created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cow'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      summary: Get all cows
+      security:
+        - bearerAuth: []
+      tags:
+        - Cows
+      responses:
+        '200':
+          description: List of cows
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cow'
+
+  /cows/{id}:
+    put:
+      summary: Update a cow
+      security:
+        - bearerAuth: []
+      tags:
+        - Cows
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cow'
+      responses:
+        '200':
+          description: Cow updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cow'
+        '404':
+          description: Cow not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a cow
+      security:
+        - bearerAuth: []
+      tags:
+        - Cows
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cow deleted successfully
+        '404':
+          description: Cow not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /medical-checks:
+    post:
+      summary: Create a medical check record
+      security:
+        - bearerAuth: []
+      tags:
+        - Medical Checks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalCheck'
+      responses:
+        '201':
+          description: Medical check record created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalCheck'
+
+  /medical-checks/cow/{cowId}:
+    get:
+      summary: Get medical checks for a specific cow
+      security:
+        - bearerAuth: []
+      tags:
+        - Medical Checks
+      parameters:
+        - in: path
+          name: cowId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of medical checks for the cow
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicalCheck'
+
+  /medical-checks/{id}:
+    put:
+      summary: Update a medical check record
+      security:
+        - bearerAuth: []
+      tags:
+        - Medical Checks
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalCheck'
+      responses:
+        '200':
+          description: Medical check record updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalCheck'
+
+    delete:
+      summary: Delete a medical check record
+      security:
+        - bearerAuth: []
+      tags:
+        - Medical Checks
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Medical check record deleted
+
+  /births:
+    post:
+      summary: Record a new birth
+      security:
+        - bearerAuth: []
+      tags:
+        - Births
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Birth'
+      responses:
+        '201':
+          description: Birth record created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Birth'
+
+  /births/cow/{motherCowId}:
+    get:
+      summary: Get birth records for a specific mother cow
+      security:
+        - bearerAuth: []
+      tags:
+        - Births
+      parameters:
+        - in: path
+          name: motherCowId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of birth records for the mother cow
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Birth'
+
+  /births/{id}:
+    put:
+      summary: Update a birth record
+      security:
+        - bearerAuth: []
+      tags:
+        - Births
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Birth'
+      responses:
+        '200':
+          description: Birth record updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Birth'
+
+    delete:
+      summary: Delete a birth record
+      security:
+        - bearerAuth: []
+      tags:
+        - Births
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Birth record deleted
+
+  /milk-production:
+    post:
+      summary: Record milk production
+      security:
+        - bearerAuth: []
+      tags:
+        - Milk Production
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MilkProduction'
+      responses:
+        '201':
+          description: Milk production record created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilkProduction'
+
+    get:
+      summary: Get milk production by date range
+      security:
+        - bearerAuth: []
+      tags:
+        - Milk Production
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+          description: Start date for milk production records
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+          description: End date for milk production records
+      responses:
+        '200':
+          description: Milk production records and total milk
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  productions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MilkProduction'
+                  totalMilk:
+                    type: number
+                    description: Total milk production in liters
+
+  /milk-production/{id}:
+    put:
+      summary: Update a milk production record
+      security:
+        - bearerAuth: []
+      tags:
+        - Milk Production
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MilkProduction'
+      responses:
+        '200':
+          description: Milk production record updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MilkProduction'
+
+    delete:
+      summary: Delete a milk production record
+      security:
+        - bearerAuth: []
+      tags:
+        - Milk Production
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Milk production record deleted

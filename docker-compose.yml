@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+    # Backend service
+    backend:
+        build:
+            context: ./server # Path to your backend directory
+        container_name: backend
+        image: msbihaladdin/backend:latest # Tagging the backend image
+        ports:
+            - '4000:4000'
+        volumes:
+            - ./server:/usr/src/app
+        environment:
+            - NODE_ENV=production
+        networks:
+            - app-network
+
+    # Frontend service
+    client:
+        build:
+            context: ./client
+        container_name: client
+        image: msbihaladdin/client:latest # Tagging the client image
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./client:/usr/src/app
+        environment:
+            - NODE_ENV=production
+        networks:
+            - app-network
+        depends_on:
+            - backend
+
+networks:
+    app-network:
+        driver: bridge
